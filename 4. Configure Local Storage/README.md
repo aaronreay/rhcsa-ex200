@@ -115,3 +115,26 @@ lvcreate -l 100%FREE vg_data -n lv_data
 Do you really want to remove active logical volume vg_data/lv_data? [y/n]: y
   Logical volume "lv_data" successfully removed.
 ```
+
+# 5. Configure systems to mount file systems at boot by UUID or label
+we can use `blkid` to obtain the UUID of our block device
+```
+[root@rhcsa-node-1 ~]# blkid /dev/vdb1
+/dev/vdb1: UUID="UwrxaS-FbQ5-jFDy-yn0C-cqxK-TNO3-PMwDgj" TYPE="LVM2_member" PARTLABEL="Linux filesystem" PARTUUID="f32ee919-4f78-4b23-b3a1-39d6d9a59dae"
+```
+we can use `e2label` to assign a label to our ext4 filesystem
+```
+[root@rhcsa-node-1 ~]# mkfs.ext4 /dev/vdb1
+[root@rhcsa-node-1 ~]# e2label /dev/vdb1
+[root@rhcsa-node-1 ~]# e2label /dev/vdb1 "new_disk"
+[root@rhcsa-node-1 ~]# e2label /dev/vdb1
+new_disk
+```
+
+## mount with label
+```
+echo -e 'LABEL="new_disk" /mnt/tmp ext4 defaults 1 2' >> /etc/fstab
+```
+
+
+
