@@ -1,1 +1,1 @@
-# List, create and delete partitions on MBR and GPT disks
+# Access a shell prompt and issue commands with correct syntax 
