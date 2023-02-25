@@ -134,7 +134,41 @@ new_disk
 ## mount with label
 ```
 echo -e 'LABEL="new_disk" /mnt/tmp ext4 defaults 1 2' >> /etc/fstab
+mount -a OR mount -L new_disk
 ```
 
+## mount with UUID
+```
+echo -e 'UUID=<from_blkid> /mnt/tmp ext4 defaults 1 2' >> /etc/fstab
+mount -a
+```
+# 6. Add new partitions and logical volumes, and swap to a system non-destructively
+
+## swapfile
+```
+[root@rhcsa-node-1 ~]# dd if=/dev/zero of=swapfile bs=2048M count=1
+[root@rhcsa-node-1 ~]# chmod 0600 swapfile
+[root@rhcsa-node-1 ~]# mkswap swapfile
+
+# Before swapfile
+[root@rhcsa-node-1 ~]# free -m | grep -i swap
+Swap:          1019          78         941
+[root@rhcsa-node-1 ~]# cat /proc/swaps
+Filename                                Type            Size            Used            Priority
+/dev/dm-1                               partition       1044476         80832           -2
+
+# After swapfile
+[root@rhcsa-node-1 ~]# swapon swapfile
+[root@rhcsa-node-1 ~]# free -m | grep -i swap
+Swap:          3067          77        2990
+[root@rhcsa-node-1 ~]# cat /proc/swaps
+Filename                                Type            Size            Used            Priority
+/dev/dm-1                               partition       1044476         78528           -2
+/root/swapfile                          file            2097144         0               -3
+
+# Add to fstab
+echo -e '/root/swapfile swap swap defaults 0 0' >> /etc/fstab
+
+```
 
 
