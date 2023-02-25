@@ -168,7 +168,24 @@ Filename                                Type            Size            Used    
 
 # Add to fstab
 echo -e '/root/swapfile swap swap defaults 0 0' >> /etc/fstab
-
 ```
-
-
+## swap with block device
+```
+[root@rhcsa-node-1 ~]# pvcreate /dev/vdb1
+  Physical volume "/dev/vdb1" successfully created.
+[root@rhcsa-node-1 ~]# vgcreate vg_data /dev/vdb1
+  Volume group "vg_data" successfully created
+[root@rhcsa-node-1 ~]# lvcreate -l 100%FREE vg_data -n lv_data
+  Logical volume "lv_data" created.
+[root@rhcsa-node-1 ~]# mkswap /dev/vg_data/lv_data 
+[root@rhcsa-node-1 ~]# swapon /dev/vg_data/lv_data
+[root@rhcsa-node-1 ~]# free -m | grep -i swap
+Swap:         13303          73       13230
+[root@rhcsa-node-1 ~]# cat /proc/swaps 
+Filename                                Type            Size            Used            Priority
+/dev/dm-1                               partition       1044476         75712           -2
+/root/swapfile                          file            2097144         0               -3
+/dev/dm-2                               partition       10481660        0               -4
+[root@rhcsa-node-1 ~]# echo -e '/dev/mapper/vg_data-lv_data swap swap defaults 0 0' >> /etc/fstab
+```
+To remove the newly created `swap` devices, we can run `swapoff /root/swapfile && swapoff /dev/vg_data/lv_data`. Removal of the `swapfile` and `Logical Volume` can then be done
