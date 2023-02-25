@@ -94,3 +94,24 @@ Physical volume is a block device node, which can be created on an entire hard d
 [root@rhcsa-node-1 ~]# pvremove /dev/vdb1
   Labels on physical volume "/dev/vdb1" successfully wiped.
 ```
+
+# 3. Assign physical volumes to volume groups
+```
+[root@rhcsa-node-1 ~]# vgcreate vg_data /dev/vdb1
+  Physical volume "/dev/vdb1" successfully created.
+  Volume group "vg_data" successfully created
+```
+
+# 4. Create and delete logical volumes
+```
+[root@rhcsa-node-1 ~]# lvcreate -L 1G vg_data -n lv_data
+  Logical volume "lv_data" created.
+
+# We can also use the below to use the entire volume group
+lvcreate -l 100%FREE vg_data -n lv_data
+
+# To remove
+[root@rhcsa-node-1 ~]# lvremove /dev/vg_data/lv_data 
+Do you really want to remove active logical volume vg_data/lv_data? [y/n]: y
+  Logical volume "lv_data" successfully removed.
+```
