@@ -100,3 +100,24 @@ If we had an `xfs` filesystem on our `LVM`, then we can use `xfs_grow /dev/vg_da
 
 If we want to resize an `ext4` filesystem in one command, we can run `lvextend -r -l +100%FREE /dev/vg_data/lv_data.
 * `-r | --resize2fs` - resize an `ext4` filesystem
+
+# 5. Create and configure set-GID directories for collaboration
+*`setgid` - special permission. If used on a directory, all new files will inherit the group ownership of the group directory owner, not the user who created them. Useful when sharing files
+
+For our case, let's say we have two users; `john` and `sarah`, and a common group `rocketengineers`
+```
+[root@rhcsa-node-1 /]# useradd john
+[root@rhcsa-node-1 /]# useradd sarah
+[root@rhcsa-node-1 /]# groupadd rocketengineers                                  
+[root@rhcsa-node-1 /]# chown -R :rocketengineers /student_projects/rocket_science
+[root@rhcsa-node-1 /]# usermod -aG rocketengineers sarah                    [root@rhcsa-node-1 /]# usermod -aG rocketengineers john     
+[root@rhcsa-node-1 /]# chmod 770 /student_projects/rocket_science/          [root@rhcsa-node-1 /]# stat /student_projects/rocket_science/                    
+  File: /student_projects/rocket_science/                                        
+  Size: 6               Blocks: 0          IO Block: 4096   directory            
+Device: fd00h/64768d    Inode: 34819463    Links: 2                              
+Access: (0770/drwxrwx---)  Uid: (    0/    root)   Gid: ( 1006/rocketengineers)  
+```
+With these groups created, `john` and `sarah` can both copy documents over to this directory, and can both read them, but not write, as the permission of their file is `0664`, meaning only world readable by users not in their group
+```
+
+```
