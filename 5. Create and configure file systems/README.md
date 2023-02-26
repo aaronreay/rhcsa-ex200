@@ -61,9 +61,26 @@ echo -e 'rhcsa-node-2:/data/nfshare /data nfs defaults 0 0' >> /etc/fstab # we d
 # 3. Configure autofs
 `AutoFS` provides automounting of network shares when they are accessed
 * `/etc/auto.master` - main template file which can point to one or more other templates
-* `/etc/auto.master.d` - includes all files with `*.autofs` appended - 
+* `/etc/auto.master.d` - template files can be stored here, which `/etc/auto.master` will bring in
 
-```mermaid
-graph TD;
-a[/etc/auto.master.d/data.autofs]-->b[/etc/auto.data];
+For our case, we can create the file `/etc/auto.master.d/data.autofs`, with the following contents:
 ```
+/- /etc/auto.data
+```
+From here we can see that our template file will mount our data to a specific folder, with our mapping details located in `/etc/auto.data`
+
+The contents of `/etc/auto.data` can be shown below:
+```
+/data/nfshare rhcsa-node-2:/data/nfshare
+```
+
+Now we can start autofs, check if the folder will be mounted when we attempt to access it
+```
+[root@rhcsa-node-1 /]# systemctl start autofs
+[root@rhcsa-node-1 /]# df -kh | grep -i nfshare
+[root@rhcsa-node-1 /]# cd /data/nfshare
+[root@rhcsa-node-1 nfshare]# df -kh | grep -i nfshare
+rhcsa-node-2:/data/nfshare     9.8G  256K  9.3G   1% /data/nfshare
+```
+Above we can see that the folder is only mounted on the filesystem when we actually attempt to access it, after starting the `autofs.service` daemon.
+
