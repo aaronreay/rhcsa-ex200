@@ -65,6 +65,5 @@ echo -e 'rhcsa-node-2:/data/nfshare /data nfs defaults 0 0' >> /etc/fstab # we d
 
 ```mermaid
 graph TD;
-a-->b;
-a-->c;
+a[/etc/auto.master.d/data.autofs]-->b[/etc/auto.data];
 ```
