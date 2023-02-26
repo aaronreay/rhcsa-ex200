@@ -84,3 +84,19 @@ rhcsa-node-2:/data/nfshare     9.8G  256K  9.3G   1% /data/nfshare
 ```
 Above we can see that the folder is only mounted on the filesystem when we actually attempt to access it, after starting the `autofs.service` daemon.
 
+# 4. Extend existing logical volumes
+For our case, let's assume we have `/dev/vg_data/lv_data` of `5G`, and we want to extend this LVM to 10G.
+```
+[root@rhcsa-node-1 /]# pvcreate /dev/vdb2
+  Physical volume "/dev/vdb2" successfully created.
+[root@rhcsa-node-1 /]# vgextend vg_data /dev/vdb2
+  Volume group "vg_data" successfully extended
+[root@rhcsa-node-1 /]# lvextend -l +100%FREE /dev/vg_data/lv_data
+  Size of logical volume vg_data/lv_data changed from <5.00 GiB (1279 extents) to 9.99 GiB (2558 extents).
+  Logical volume vg_data/lv_data successfully resized.
+[root@rhcsa-node-1 /]# resize2fs /dev/vg_data/lv_data
+```
+If we had an `xfs` filesystem on our `LVM`, then we can use `xfs_grow /dev/vg_data/lv_data`.
+
+If we want to resize an `ext4` filesystem in one command, we can run `lvextend -r -l +100%FREE /dev/vg_data/lv_data.
+* `-r | --resize2fs` - resize an `ext4` filesystem
