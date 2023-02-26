@@ -47,6 +47,7 @@ firewall-cmd --reload
 
 ## mounting our nfshare
 ```
+dnf install nfs-utils -y
 [root@rhcsa-node-1 ~]# showmount -e rhcsa-node-2
 Export list for rhcsa-node-2:
 /data/nfshare 192.168.122.0/24
@@ -56,3 +57,7 @@ Export list for rhcsa-node-2:
 echo -e 'rhcsa-node-2:/data/nfshare /data nfs defaults 0 0' >> /etc/fstab # we do not do fsck checking or dump on nfs share
 
 ```
+
+# 3. Configure autofs
+`AutoFS` provides automounting of network shares when they are accessed
+* `/etc/auto.master` - main template file which can point to one or more other templates
