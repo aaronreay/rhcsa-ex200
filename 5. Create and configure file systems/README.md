@@ -61,3 +61,10 @@ echo -e 'rhcsa-node-2:/data/nfshare /data nfs defaults 0 0' >> /etc/fstab # we d
 # 3. Configure autofs
 `AutoFS` provides automounting of network shares when they are accessed
 * `/etc/auto.master` - main template file which can point to one or more other templates
+* `/etc/auto.master.d` - includes all files with `*.autofs` appended - 
+
+```mermaid
+graph TD;
+a-->b;
+a-->c;
+```
