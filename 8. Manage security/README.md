@@ -108,6 +108,32 @@ As we know, linux has three types of permissions on a file:
 * `1 (x)` - execute
 
 However, we also have three `special` permissions:
-* `setuid` - set user id bit. This only works on a file, and only a file which is `executable`. When the executable is run
+* `setuid` `(u+s)` - set user id bit. This only works on a file, and only a file which is `executable`. When the executable is run
 it will set permissions to that of the owner of the file, rather than the user who launched it. When you think about
 it, this is very **_DANGEROUS_**.
+* `setgid` `(g+s)`- set group id bit. Works on both `files` and `directories`. When used on a file, it acts in the same sense as `setuid`,
+executing as the group of the user who owns it, rather than the user who executed it. When the bit is set for a directory, the files within the directory
+will have the same group as the group of the parent directory. This is very useful for file sharing.
+* `sticky bit` `(+t)` - When set on a directory, files can only be deleted or renamed by the file owner, directory owner, and root user, even with `777` permissions. Think of `/tmp` as a good example. we have the sticky bit `t` option if you run `ls -ld /tmp`
+```
+[reaya@rhcsa-node-1 tmp]$ touch ajr2          
+[reaya@rhcsa-node-1 tmp]$ chmod u+s ajr2      
+[reaya@rhcsa-node-1 tmp]$ ls -l ajr2          
+-rwSrw-r--. 1 reaya reaya 0 Feb 27 21:53 ajr2 
+[reaya@rhcsa-node-1 tmp]$ chmod u-s ajr2      
+[reaya@rhcsa-node-1 tmp]$ chmod g+s ajr2      
+[reaya@rhcsa-node-1 tmp]$ ls -l ajr2          
+-rw-rwSr--. 1 reaya reaya 0 Feb 27 21:53 ajr2 
+[reaya@rhcsa-node-1 tmp]$ chmod g-s ajr2      
+[reaya@rhcsa-node-1 tmp]$ chmod +t ajr2       
+[reaya@rhcsa-node-1 tmp]$ ls -l ajr2          
+-rw-rw-r-T. 1 reaya reaya 0 Feb 27 21:53 ajr2 
+```
+The reason all of the special permissions above are in `UPPERCASE` is due to the fact that the underlying `execute` bit is not set.
+
+We can also represent these in `octal` format
+```
+[reaya@rhcsa-node-1 tmp]$ chmod 4744 ajr2 ( SETUID )
+[reaya@rhcsa-node-1 tmp]$ chmod 2644 ajr2 ( SGID )
+[reaya@rhcsa-node-1 tmp]$ chmod 1755 ajr2 ( STICKY )
+```
