@@ -32,3 +32,26 @@ We can also limit who can & cannot schedule jobs:
 Cron allows us to schedule jobs to run at certain intervals, multiple times
 
 ![Crontab Schedule](crontab.png)
+
+We can use `crontab -e` to edit the crontab of the current user. Let's put our script to run at 17:00 everyday
+```
+[root@rhcsa-node-1 ~]# crontab -e
+00 17 * * * root /root/ls_script.sh
+[root@rhcsa-node-1 ~]# crontab -l
+00 17 * * * root /root/ls_script.sh
+```
+To delete the crontab we can use `crontab -d`
+
+We can also create a cron file, with the same contents as above, as place it in the `/etc/cron.d/*` directory
+
+`Cron` actually has four default directories:
+* `/etc/cron.weekly`
+* `/etc/cron.monthly`
+* `/etc/cron.hourly`
+* `/etc/cron.daily`
+
+We can simply place our `ls_script.sh` file in one of these, as these directories have pre-configured run times (as evidenced in the name)
+
+Similar to `at`, we can also allow or deny user scheduling with the two directories:
+* `/etc/cron.allow`
+* `/etc/cron.deny`
