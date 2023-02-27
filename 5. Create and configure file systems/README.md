@@ -120,6 +120,45 @@ Device: fd00h/64768d    Inode: 34819463    Links: 2
 Access: (0770/drwxrwx---)  Uid: (    0/    root)   Gid: ( 1006/rocketengineers)  
 ```
 With these groups created, `john` and `sarah` can both copy documents over to this directory, and can both read them, but not write, as the permission of their file is `0664`, meaning only world readable by users not in their group
+
+`john_doc.txt` in `/student_projects/rocket_science`
 ```
+[john@rhcsa-node-1 rocket_science]$ stat john_doc.txt 
+  File: john_doc.txt
+  Size: 5               Blocks: 8          IO Block: 4096   regular file
+Device: fd00h/64768d    Inode: 35490622    Links: 1
+Access: (0664/-rw-rw-r--)  Uid: ( 1002/    john)   Gid: ( 1004/    john)
+```
+`sarah_doc.txt` in `/student_projects/rocket_science`
+```
+[sarah@rhcsa-node-1 ~]$ stat sarah_doc.txt                              
+  File: sarah_doc.txt                                                   
+  Size: 5               Blocks: 8          IO Block: 4096   regular file
+Device: fd00h/64768d    Inode: 17468119    Links: 1                     
+Access: (0664/-rw-rw-r--)  Uid: ( 1003/   sarah)   Gid: ( 1005/   sarah)
+```
+As the permissions of these files are owned wholly by `john` and `sarah`, they can only read each others document, but not write to them
+
+To fix this, we can use the `setgid flag (s/2)`
+```
+[root@rhcsa-node-1 ~]# chmod g+s /student_projects/rocket_science/
+[root@rhcsa-node-1 ~]# ls -ld /student_projects/rocket_science/
+drwxrws---. 2 root rocketengineers 47 Feb 27 15:00 /student_projects/rocket_science/
+```
+Here we can see the addition of the `s` value. This is our `setgid` option. Now anytime a new document is copied into
+this directory, it will inherit the group permission
 
 ```
+[sarah@rhcsa-node-1 ~]$ cp sarah_doc_new.txt /student_projects/rocket_science/[s
+[sarah@rhcsa-node-1 rocket_science]$ stat  sarah_doc_new.txt 
+  File: sarah_doc_new.txt
+  Size: 5               Blocks: 8          IO Block: 4096   regular file
+Device: fd00h/64768d    Inode: 35490623    Links: 1
+Access: (0664/-rw-rw-r--)  Uid: ( 1003/   sarah)   Gid: ( 1006/rocketengineers)
+
+# we can see that the Gid is now set to rocketengineers, meaning john can now write to this file
+```
+
+# 6. Diagnose and correct file permission problems
+
+For this topic, we will use the available script - https://gitlab.com/EddieJennings/rhcsa-practice.git
