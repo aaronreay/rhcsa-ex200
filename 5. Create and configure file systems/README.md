@@ -165,3 +165,50 @@ For this topic, we will use the available script - https://gitlab.com/EddieJenni
 ```
 git clone https://gitlab.com/EddieJennings/rhcsa-practice.git && sudo rhcsa-practice/acltest_setup.sh
 ```
+After running through the creation, you will have the following (depending on what you entered; here's my case):
+* Directory - `/rhcsa_test/group1`
+* Directory - `/rhcsa_test/group2`
+* User - `sarah`
+* User - `john`
+```
+[sarah@rhcsa-node-1 rhcsa_test]$ id john                    
+uid=1003(john) gid=1008(john) groups=1008(john),1009(group2)
+
+[sarah@rhcsa-node-1 rhcsa_test]$ id sarah                      
+uid=1002(sarah) gid=1007(sarah) groups=1007(sarah),1002(group1)
+```
+Now I want to access the contents of `/rhcsa_test/group2`, but my supplementary group is `group`, so I cannot
+
+There's a couple options we can to do solve this
+## the dirty way (from a sudo accessible user)
+```
+[root@rhcsa-node-1 ~]# usermod -aG group2 sarah # this will append group2 onto sarahs supplementary groups
+[root@rhcsa-node-1 ~]# gpasswd -a sarah group2
+```
+
+## with ACLs
+```
+[root@rhcsa-node-1 ~]# getfacl /rhcsa_test/group2
+# file: rhcsa_test/group2
+# owner: root
+# group: group2
+user::rwx
+group::rwx
+other::---
+``` 
+Here we can see that only `root` or members of `group2` can access this directory
+
+Let's change this with `setfactl`
+```
+[root@rhcsa-node-1 ~]# setfacl -R -m u:sarah:rwx /rhcsa_test/group2
+[root@rhcsa-node-1 ~]# getfacl /rhcsa_test/group2
+# file: rhcsa_test/group2
+# owner: root
+# group: group2
+user::rwx
+user:sarah:rwx
+group::rwx
+mask::rwx
+other::---
+```
+Now we have explicitly allowed `sarah` access with permissions `rwx`
