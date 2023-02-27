@@ -29,3 +29,6 @@ We can also limit who can & cannot schedule jobs:
 * `/etc/at.deny` - prevent users from scheduling jobs
 
 ## Cron
+Cron allows us to schedule jobs to run at certain intervals, multiple times
+
+![alt text] (https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.adminschoice.com%2Fcrontab-quick-reference&psig=AOvVaw3_yhc_huokS_vPc4obnWkJ&ust=1677601390761000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCOiw1amOtv0CFQAAAAAdAAAAABAJ)
