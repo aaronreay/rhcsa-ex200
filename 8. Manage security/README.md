@@ -265,4 +265,25 @@ ssh_port_t                     tcp      1300, 22
 ```
 to remove this, we can specify the `-d | --delete` flag, rather than the `-a | --add` flag.
 
+# 8. Use boolean settings to modify system SELinux settings
+`SELinux` booleans allow for policy changes to be made during runtime, without the need of understanding how to write policies
+
+To view the list of SELinux booleans we have available we can run:
+```
+[root@rhcsa-node-1 ~]# semanage boolean -l # list all booleans
+[root@rhcsa-node-1 ~]# semanage boolean -l -C # list booleans with local customisation
+```
+
+To enable booleans, we have two options, either through `semanage boolean` OR `setsebool`
+```
+[root@rhcsa-node-1 ~]# semanage boolean --modify --on httpd_manage_ipa   
+[root@rhcsa-node-1 ~]# semanage boolean -l -C | grep -i httpd_manage_ipa 
+httpd_manage_ipa               (on   ,   on)  Allow httpd to manage ipa  
+
+[root@rhcsa-node-1 ~]# setsebool -P httpd_manage_ipa 1                  
+[root@rhcsa-node-1 ~]# semanage boolean -l -C | grep -i httpd_manage_ipa
+httpd_manage_ipa               (on   ,   on)  Allow httpd to manage ipa 
+```
+
+# 9. Diagnose and address routine SELinux policy violations
 
