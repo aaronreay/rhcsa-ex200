@@ -102,7 +102,7 @@ If we want to resize an `ext4` filesystem in one command, we can run `lvextend -
 * `-r | --resize2fs` - resize an `ext4` filesystem
 
 # 5. Create and configure set-GID directories for collaboration
-*`setgid` - special permission. If used on a directory, all new files will inherit the group ownership of the group directory owner, not the user who created them. Useful when sharing files
+* `setgid` - special permission. If used on a directory, all new files will inherit the group ownership of the group directory owner, not the user who created them. Useful when sharing files
 
 For our case, let's say we have two users; `john` and `sarah`, and a common group `rocketengineers`
 ```
