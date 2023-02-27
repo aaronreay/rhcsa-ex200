@@ -170,4 +170,35 @@ PasswordAuthentication no
 ```
 
 # 4. Set enforcing and permissive modes for SELinux
+In order to check the current status of `selinux` we can run
+```
+[root@rhcsa-node-1 ~]# getenforce              
+Enforcing                                      
+
+[root@rhcsa-node-1 ~]# sestatus                
+SELinux status:                 enabled        
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux   
+Loaded policy name:             targeted       
+Current mode:                   enforcing      
+Mode from config file:          enforcing      
+Policy MLS status:              enabled        
+Policy deny_unknown status:     allowed        
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33             
+```
+We have two modes to SELinux:
+* `enforcing (1)` - enabled and enforcing
+* `permissive (0)` - enabled and non-enforcing (will only alert)
+
+To change our modes we can run
+```
+[root@rhcsa-node-1 ~]# setenforce 1
+[root@rhcsa-node-1 ~]# getenforce  
+Enforcing                          
+```
+We can also edit the config file `/etc/selinux/config`
+
+# 5. List and identify SELinux file and process context
+
 
