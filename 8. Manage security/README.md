@@ -137,3 +137,37 @@ We can also represent these in `octal` format
 [reaya@rhcsa-node-1 tmp]$ chmod 2644 ajr2 ( SGID )
 [reaya@rhcsa-node-1 tmp]$ chmod 1755 ajr2 ( STICKY )
 ```
+
+# 3. Configure key-based authentication for SSH
+to generate a new ssh-key, we can run `ssh-keygen`
+These will generate the files in `~/.ssh/`:
+* `id_rsa` - this is your `private` ssh key. This should never leave the host machine
+* `id_rsa.pub` - this is your `public` ssh key. This is stored in another hosts `~/.ssh/authorized_keys` directory.
+This can allow passwordless logins
+
+we can user `ssh-copy-id` to copy our public key over
+```
+[reaya@rhcsa-node-1 .ssh]$ ssh-copy-id rhcsa-node-2                                                                 
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/reaya/.ssh/id_rsa.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+reaya@rhcsa-node-2's password:                                                      
+                                          
+Number of key(s) added: 1                                                           
+                                          
+Now try logging into the machine, with:   "ssh 'rhcsa-node-2'"                                                      
+and check to make sure that only the key(s) you wanted were added.                                                  
+```
+
+If we want to disable `PasswordAuthentication` we can run
+```
+[root@rhcsa-node-1 ~]# sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+[root@rhcsa-node-1 ~]# cat /etc/ssh/sshd_config | grep -i passwordauthentication
+#PasswordAuthentication no
+PasswordAuthentication no
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication, then enable this but set PasswordAuthentication
+```
+
+# 4. Set enforcing and permissive modes for SELinux
+
