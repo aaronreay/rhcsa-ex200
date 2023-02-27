@@ -114,5 +114,89 @@ Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/b
 As we can see, it's simply a `symlink` from our `target` file in `/usr/lib/systemd/system/*` to running config of `/etc/systemd/system/*`
 
 # 4. Configure time service clients
+## date
+We can print out the current time and date with the `date` command
+```
+[root@rhcsa-node-1 ~]# date '+%Y-%m-%d %H:%M'
+2023-02-27 17:11                             
+```
+This runs the `date` command with the following variables:
+* `%Y` - year
+* `%m` - month
+* `%d` - day of month
+* `%H` - hour
+* `%M` - minute
 
+## hwclock
+set system clock to hardware clock `OR` set hardware clock to system clock
+```
+[root@rhcsa-node-1 ~]# hwclock -s
+[root@rhcsa-node-1 ~]# hwclock -w
+```
+
+## timedatectl
+`timedatectl` shows us our current time, date, timezone, and whether we are synchronised or not
+```
+[root@rhcsa-node-1 ~]# timedatectl                     
+               Local time: Mon 2023-02-27 17:16:39 GMT 
+           Universal time: Mon 2023-02-27 17:16:39 UTC 
+                 RTC time: Mon 2023-02-27 17:16:39     
+                Time zone: Europe/London (GMT, +0000)  
+System clock synchronized: no                          
+              NTP service: n/a                         
+          RTC in local TZ: no                          
+```
+Setting time manually with `timedatectl`
+```
+[root@rhcsa-node-1 ~]# timedatectl set-time 2023-02-27
+[root@rhcsa-node-1 ~]# timedatectl set-time 17:00:00  
+[root@rhcsa-node-1 ~]# timedatectl                    
+               Local time: Mon 2023-02-27 17:00:01 GMT
+           Universal time: Mon 2023-02-27 17:00:01 UTC
+                 RTC time: Mon 2023-02-27 17:00:02    
+                Time zone: Europe/London (GMT, +0000) 
+System clock synchronized: no                         
+              NTP service: n/a                        
+          RTC in local TZ: no                         
+```
+setting timezones
+```
+[root@rhcsa-node-1 ~]# timedatectl list-timezones
+[root@rhcsa-node-1 ~]# timedatectl set-timezone Europe/London 
+```
+Setup `NTP` sync with `timedatectl`
+```
+[root@rhcsa-node-1 ~]# timedatectl set-ntp true
+[root@rhcsa-node-1 ~]# timedatectl | grep -E '(sync|NTP)'
+System clock synchronized: yes                           
+              NTP service: active                        
+```
+If the `System clock` is not set to `yes`, we need to ensure we have `chrony` installed
+```
+[root@rhcsa-node-1 ~]# dnf install chrony -y 
+[root@rhcsa-node-1 ~]# systemctl enable chronyd --now
+[root@rhcsa-node-1 ~]# systemctl status chronyd # ensure it's running
+```
+To see if we are synced, we can run the following:
+```
+[root@rhcsa-node-1 ~]# chronyc sources -v
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| /             'x' = may be in error, '~' = too variable, '?' = unusable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample               
+===============================================================================
+^- dot.kkursor.ru                2   6   273     4  +1091us[+1091us] +/-   66ms
+^- ntp.copaco.com.py             2   6   377     5  -1813us[-1813us] +/-  188ms
+^- www.kapos-net.hu              3   6   375     5  +1797us[+1797us] +/-   65ms
+^* ntp3.lwlcom.net               1   6   377     6   -106us[ -172us] +/-   12ms
+```
+At the moment, we are using upstream NTP timeservers. If we want to use our own, we will need to edit
+the `/etc/chrony.conf` file and append `server ntp.example.lab iburst`. Ensure we have the iburst
+option, which provides a greater accuracy of time syncing
 
