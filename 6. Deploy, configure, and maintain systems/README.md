@@ -200,3 +200,60 @@ At the moment, we are using upstream NTP timeservers. If we want to use our own,
 the `/etc/chrony.conf` file and append `server ntp.example.lab iburst`. Ensure we have the iburst
 option, which provides a greater accuracy of time syncing
 
+## firewalls for NTP
+If we're unable to reach externally to an NTP server, we need to ensure we have `port 123` or services `ntp`
+enabled in firewalld
+```
+[root@rhcsa-node-1 ~]# firewall-cmd --add-port=123/udp --permanent
+success                                                           
+[root@rhcsa-node-1 ~]# firewall-cmd --add-service=ntp --permanent 
+Warning: ALREADY_ENABLED: ntp                                     
+success                                                                   
+[root@rhcsa-node-1 ~]# firewall-cmd --reload                      
+success                                                           
+```
+
+# 5. Install and update software packages from Red Hat Network, a remote repository, or from the local file system
+
+In order to gain access to RedHat Repositories, we must first register our system
+```
+subscription-manager register              
+subscription-manager refresh               
+subscription-manager list --available --all
+subscription-manager attach --auto         
+```
+To install packages, we can use the `DNF` package manager
+```
+[root@rhcsa-node-1 ~]# dnf group list
+[root@rhcsa-node-1 ~]# dnf group info <group_name> 
+[root@rhcsa-node-1 ~]# dnf group install <group_name>
+[root@rhcsa-node-1 ~]# dnf search
+[root@rhcsa-node-1 ~]# dnf whatprovides
+[root@rhcsa-node-1 ~]# dnf localinstall
+[root@rhcsa-node-1 ~]# dnf install
+```
+We can also use `RPM` in order to install RPM packages
+```
+[root@rhcsa-node-1 ~]# rpm -i package.rpm # install a package
+[root@rhcsa-node-1 ~]# rpm -U package.rpm # upgrade a package
+```
+
+# 6. Modify the system bootloader
+The bootloader for a Linux system can be stored in two locations, depending on whether it's a `UEFI` or `BIOS` system:
+* `UEFI` - `/boot/efi/EFI/redhat/grub.cfg`
+* `BIOS` - `/boot/grub2/grub.cfg`
+
+For any changes we want to make to the bootloader, we will always use the `/etc/default/grub` location
+
+After changes have been made, we can re-generate out boot loader with
+```
+# For UEFI
+[root@rhcsa-node-1 ~]# grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
+Generating grub configuration file ...                                
+Adding boot menu entry for EFI firmware configuration                 
+done                                                                  
+
+# For BIOS
+[root@rhcsa-node-1 ~]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...                                
+```
