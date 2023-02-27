@@ -94,7 +94,7 @@ If we have cockpit installed, we can navigate to http://localhost:9090 and go to
 
 We can check our current default target with:
 ```
-[root@rhcsa-node-1 ~]# systemctl get-defaul
+[root@rhcsa-node-1 ~]# systemctl get-default
 multi-user.target
 ```
 a `*.target` unit allows us to group units via dependencies
