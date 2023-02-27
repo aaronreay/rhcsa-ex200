@@ -31,4 +31,4 @@ We can also limit who can & cannot schedule jobs:
 ## Cron
 Cron allows us to schedule jobs to run at certain intervals, multiple times
 
-![alt text] (https://i2.wp.com/www.adminschoice.com/wp-content/uploads/2009/12/crontab-layout.png?resize=768%2C341&ssl=1)
+![alt text] (crontab.png)
