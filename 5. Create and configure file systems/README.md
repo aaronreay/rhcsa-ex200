@@ -162,3 +162,6 @@ Access: (0664/-rw-rw-r--)  Uid: ( 1003/   sarah)   Gid: ( 1006/rocketengineers)
 # 6. Diagnose and correct file permission problems
 
 For this topic, we will use the available script - https://gitlab.com/EddieJennings/rhcsa-practice.git
+```
+git clone https://gitlab.com/EddieJennings/rhcsa-practice.git && sudo rhcsa-practice/acltest_setup.sh
+```
