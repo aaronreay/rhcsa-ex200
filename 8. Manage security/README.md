@@ -286,4 +286,33 @@ httpd_manage_ipa               (on   ,   on)  Allow httpd to manage ipa
 ```
 
 # 9. Diagnose and address routine SELinux policy violations
+One of the most useful tools for diagnosing SELinux issues is `setroubleshoot`
+The package can be used in the `GUI` OR `CLI`
+
+Install it with `dnf install setroubleshoot -y`
+
+For our scenario, we will attempt to boot `httpd` on port `1234`. When the service fails to start, we can look in 
+a couple different places
+
+```
+[root@rhcsa-node-1 ~]# journalctl -xef
+Feb 27 23:32:54 rhcsa-node-1.lab setroubleshoot[15785]: SELinux is preventing /usr/sbin/httpd from name_bind access on the tcp_socket port 1234. For complete SELinux messages run: sealert -l a0cc650b-3565-4726-a383-2abb00a85ace
+```
+Here we can see our `setroubleshootd` daemon has found a policy violation with `httpd`. Lets view this message
+```
+[root@rhcsa-node-1 ~]# sealert -l a0cc650b-3565-4726-a383-2abb00a85ace
+SELinux is preventing /usr/sbin/httpd from name_bind access on the tcp_socket port 1234.
+
+*****  Plugin catchall (100. confidence) suggests   **************************
+
+If you believe that httpd should be allowed name_bind access on the port 1234 tcp_socket by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# ausearch -c 'httpd' --raw | audit2allow -M my-httpd
+# semodule -X 300 -i my-httpd.pp
+```
+Here we can see it shows us that we are failing due to trying to bind on port `1234`. We get a couple of options to fix this, but what do they do?
+
 
