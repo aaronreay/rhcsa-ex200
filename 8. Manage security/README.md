@@ -89,5 +89,25 @@ this will set our `work` zone to use an interface of `eth0`
 
 
 # 2. Manage default file permissions
+`stat` is a command which can give you more information on details of a file
+```
+[reaya@rhcsa-node-1 ~]$ stat file1.txt                                        
+  File: file1.txt                                                             
+  Size: 0               Blocks: 0          IO Block: 4096   regular empty file
+Device: fd00h/64768d    Inode: 865796      Links: 1                           
+Access: (0664/-rw-rw-r--)  Uid: ( 1000/   reaya)   Gid: ( 1000/   reaya)      
+Context: unconfined_u:object_r:user_home_t:s0                                 
+Access: 2023-02-27 21:27:13.973510855 +0000                                   
+Modify: 2023-02-27 21:27:13.973510855 +0000                                   
+Change: 2023-02-27 21:27:13.973510855 +0000                                   
+ Birth: 2023-02-27 21:27:13.973510855 +0000                                   
+```
+As we know, linux has three types of permissions on a file:
+* `4 (r)` - read
+* `2 (w)` - write
+* `1 (x)` - execute
 
-
+However, we also have three `special` permissions:
+* `setuid` - set user id bit. This only works on a file, and only a file which is `executable`. When the executable is run
+it will set permissions to that of the owner of the file, rather than the user who launched it. When you think about
+it, this is very **_DANGEROUS_**.
