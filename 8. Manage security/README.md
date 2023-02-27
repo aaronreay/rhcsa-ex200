@@ -201,4 +201,68 @@ We can also edit the config file `/etc/selinux/config`
 
 # 5. List and identify SELinux file and process context
 
+## Process context
+to view the process context we can run
+```
+[root@rhcsa-node-1 ~]# ps -eZ | grep passwd # `passwd` run in a seperate terminal
+unconfined_u:unconfined_r:passwd_t:s0-s0:c0.c1023 15400 pts/3 00:00:00 passwd 
+```
+Here we can see that we have a type context of `passwd_t`, even though `passwd` normally has a type context
+of `password_exec_t`. This is due to the fact that types define a domain for processes, and a type for files
+
+## File context
+to view the file context we can run
+```
+[reaya@rhcsa-node-1 ~]$ touch ajr       
+[reaya@rhcsa-node-1 ~]$ ls -Z ajr       
+unconfined_u:object_r:user_home_t:s0 ajr
+```
+* user - `unconfined_u`
+* role - `object_r`
+* type - `user_home_t`
+* level - `s0`
+
+`SELinux` policy rules are only checked after Discretionary Access Controls (DAC) rules
+
+to check a directory we canr un `ls -dZ /tmp`
+
+# 6. Restore default file contexts
+to restore default file contexts we can use the `restorecon` command
+```
+[reaya@rhcsa-node-1 ~]$ chcon -t httpd_sys_content_t ajr
+[reaya@rhcsa-node-1 ~]$ ls -lZ ajr
+-rw-rw-r--. 1 reaya reaya unconfined_u:object_r:httpd_sys_content_t:s0 0 Feb 27 22:53 ajr
+```
+Here we can see we've changed the `type` context from `user_home_t` to `httpd_sys_content_t`. This is 
+incorrect, so we want to change it back
+```
+[reaya@rhcsa-node-1 ~]$ restorecon -v ajr
+Relabeled /home/reaya/ajr from unconfined_u:object_r:httpd_sys_content_t:s0 to unconfined_u:object_r:user_home_t:s0
+```
+If we want to run this on an entire directory, we can specify the `-R` flag
+
+# 7. Manage SELinux port labels
+Each `port` within Linux has a defined `type` context assigned to it
+```
+[root@rhcsa-node-1 ~]# semanage port -l | grep ssh
+ssh_port_t                     tcp      22        
+
+[root@rhcsa-node-1 ~]# semanage port -l  | grep -i unreserved  
+unreserved_port_t              sctp     1024-65535             
+unreserved_port_t              tcp      61000-65535, 1024-32767
+unreserved_port_t              udp      61000-65535, 1024-32767
+```
+We can see that `ssh` on port `22` has a default type context of `ssh_port_t`
+However, we can also see that ports in the range of `1024-32767` for both `udp/tcp` are unreserved.
+This does not count for ports that fall within that range, that do have a specific mapping to them
+
+For example, if you attempted to spool `sshd` on port `1300`, it would fail, as this is then assigned
+a context of `unreserved_port_t`. To overcome this, we can change the actual port type of `ssh_port_t`
+```
+[root@rhcsa-node-1 ~]# semanage port -a -t ssh_port_t -p tcp 1300
+[root@rhcsa-node-1 ~]# semanage port -l | grep ssh_port_t        
+ssh_port_t                     tcp      1300, 22                 
+```
+to remove this, we can specify the `-d | --delete` flag, rather than the `-a | --add` flag.
+
 
