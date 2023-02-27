@@ -96,4 +96,57 @@ Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /u
 
 # 4. Restrict network access using firewall-cmd/firewall
 
+For `firewalld`, we can either add a port or a pre-defined service to our firewall
 
+to check what services are available by default
+```
+firewall-cmd --get-services
+```
+
+to add a port to our firewall
+```
+[root@rhcsa-node-1 ~]# firewall-cmd --add-port=22/tcp --permanent
+success                                                          
+[root@rhcsa-node-1 ~]# firewall-cmd --reload                     
+success                                                          
+```
+to add a service to our firewall
+```
+[root@rhcsa-node-1 ~]# firewall-cmd --add-service=ssh --permanent
+success                                                          
+[root@rhcsa-node-1 ~]# firewall-cmd --reload                     
+success                                                          
+```
+To remove a `port` or `service`, we can use the `--remove-port` or `--remove-service` flags
+
+If we want to whitelist an ip
+```
+[root@rhcsa-node-1 ~]# firewall-cmd --add-source=192.168.122.0/24 --permanent
+success                                                                      
+[root@rhcsa-node-1 ~]# firewall-cmd --reload
+success                                     
+```
+to blacklist an IP, we can simply use the `--remove-source` flag
+
+To lost all of our rules
+```
+[root@rhcsa-node-1 ~]# firewall-cmd --get-active-zones      
+public                                                      
+  interfaces: enp1s0                                        
+  sources: 192.168.122.0/24                                 
+[root@rhcsa-node-1 ~]# firewall-cmd --list-all --zone=public
+public (active)                                             
+  target: default                                           
+  icmp-block-inversion: no                                  
+  interfaces: enp1s0                                        
+  sources: 192.168.122.0/24                                 
+  services: cockpit dhcpv6-client ntp ssh                   
+  ports: 123/udp 22/tcp                                     
+  protocols:                                                
+  forward: no                                               
+  masquerade: no                                            
+  forward-ports:                                            
+  source-ports:                                             
+  icmp-blocks:                                              
+  rich rules:                                               
+```
