@@ -48,5 +48,48 @@ localhost/hello-world          latest      feb5d9fea6a5  17 months ago  19.9 kB 
 ```
 
 # 4. Build a container from a ContainerFile
+To build an image from a `Container|DockerFile` we can use the `podman build` command, which uses `buildah` scripts in order to build
+```
+# Create a DockerFIle with the contents
+[root@rhcsa-node-1 ~]# cat Dockerfile          
+FROM registry.access.redhat.com/rhel-minimal   
+ENTRYPOINT "echo "Podman build this container."
 
+# run the podman build command
+[root@rhcsa-node-1 ~]# podman build -t podbuilt . # podbuilt will be the name of our container
+STEP 1/2: FROM registry.access.redhat.com/rhel-minimal
+
+# run the new container
+podman run podbuilt
+```
+
+# 5. Perform basic container management such as running, starting, stopping, and listing running containers
+
+To `run` a container
+```
+[root@rhcsa-node-1 ~]# podman run -d rhel-minimal #  we use '-d' to detatch, and run in the background
+c0a5f89e819b9d9b28ccffe3d98cf9f1af0628ae5ccfaf1332c40e20c89e32b0
+```
+To `list` container status
+```
+[root@rhcsa-node-1 ~]# podman container ls
+CONTAINER ID  IMAGE                           COMMAND               CREATED             STATUS                 PORTS       NAMES
+a01b9b29ee22  docker.io/library/caddy:latest  caddy run --confi...  About a minute ago  Up About a minute ago              amazing_matsumoto
+
+podman ps -a # this will show both running and stopped containers
+```
+To `stop` and `start` a container
+```
+[root@rhcsa-node-1 ~]# podman stop amazing_matsumoto
+amazing_matsumoto
+[root@rhcsa-node-1 ~]# podman container ls
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[root@rhcsa-node-1 ~]# podman start amazing_matsumoto
+amazing_matsumoto
+[root@rhcsa-node-1 ~]# podman container ls
+CONTAINER ID  IMAGE                           COMMAND               CREATED        STATUS             PORTS       NAMES
+a01b9b29ee22  docker.io/library/caddy:latest  caddy run --confi...  3 minutes ago  Up 11 seconds ago              amazing_matsumoto
+```
+
+# 6. Run a service inside a container
 
