@@ -112,4 +112,5 @@ F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 To change the value of a process, we can run `nice -n 10 top`. This will set the nice level of top to 10
 
 We can view this in the top output
+
 ![nice](nice.png)
