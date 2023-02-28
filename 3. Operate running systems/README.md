@@ -90,3 +90,11 @@ bash
 [root@rhcsa-node-1 ~]# pgrep -l -u user1
 [root@rhcsa-node-1 ~]#                  
 ```
+
+# 5. Adjust process scheduling
+`chrt` - manipulate the real-time attributes of a process
+
+* `-f` - set schedule to `SCHED_FIFO`
+* `-o` - set schedule to `SCHED_OTHER`
+* -`r` - set schedule to `SCHED_RR`
+
