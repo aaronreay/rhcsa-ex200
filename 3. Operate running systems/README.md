@@ -124,8 +124,8 @@ The higher the value, the lower the priority. So `-` is good, `+` is bad (in a s
 We also have the `renice` command. This allows us to change the process of an existing process
 
 `renice -n <nice_value> -p/--pid <process_id` - change priority of existing process
-`renice -n <nice_value> -g <group_id> - change priority of all processes of a specific group
-`renice -n <nice_value> -u <name>|<id> - change priority of all programs of a specific user
+`renice -n <nice_value> -g <group_id>` - change priority of all processes of a specific group
+`renice -n <nice_value> -u <name>|<id>` - change priority of all programs of a specific user
 
 # 6. Manage tuning profiles
 `tuned` is the package responsible for tuning profiles. It is managed with `tuned-adm`. We can also get additional profiles with `dnf search tuned-profiles`
