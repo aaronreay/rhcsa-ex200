@@ -25,3 +25,32 @@ shutdown -r +15 # reboot in 15 minutes
 ```
 
 # 2. Boot systems into different targets manually
+To view our potential targets, we can run the below
+```
+[root@rhcsa-node-1 ~]# ls -l /usr/lib/systemd/system/runlevel*.target
+lrwxrwxrwx. 1 root root 15 Sep 27 08:35 /usr/lib/systemd/system/runlevel0.target -> poweroff.target
+lrwxrwxrwx. 1 root root 13 Sep 27 08:35 /usr/lib/systemd/system/runlevel1.target -> rescue.target
+lrwxrwxrwx. 1 root root 17 Sep 27 08:35 /usr/lib/systemd/system/runlevel2.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 Sep 27 08:35 /usr/lib/systemd/system/runlevel3.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 Sep 27 08:35 /usr/lib/systemd/system/runlevel4.target -> multi-user.target
+lrwxrwxrwx. 1 root root 16 Sep 27 08:35 /usr/lib/systemd/system/runlevel5.target -> graphical.target
+lrwxrwxrwx. 1 root root 13 Sep 27 08:35 /usr/lib/systemd/system/runlevel6.target -> reboot.target
+```
+
+# 3. Interrupt the boot process in order to gain access to a system
+This is *_VERY IMPORTANT_* for the exam. If we cannot do this, we cannot proceed with the exam
+
+We will need to boot up our linux node, and at the `GRUB` prompt, hit `e` to interrupt the process
+
+On the line starting with `linux`, and the end, we need to append `rd.break`. This will bring us to the `initrd` environment
+
+From here, we will not have access to our usual binaries, as the OS has not loaded yet. To fix this
+```
+mount -o rw,remount /sysroot
+chroot /sysroot
+passwd
+touch /.autorelabel # it's important to relabel the entire filesystem, as selinux does not know the context as we've edited files outside of the OS
+exit
+exit
+```
+
