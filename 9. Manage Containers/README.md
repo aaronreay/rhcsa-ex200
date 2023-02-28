@@ -18,3 +18,35 @@ docker.io/library/hello-world                            Hello World! (an exampl
 [root@rhcsa-node-1 ~]# podman pull docker.io/library/hello-world
 Trying to pull docker.io/library/hello-world:latest...
 ```
+
+# 1. Inspect container images
+We can use `Skopeo` to inspect remote container images
+```
+[root@rhcsa-node-1 ~]# skopeo inspect docker://docker.io/library/hello-world 
+{                                                                            
+    "Name": "docker.io/library/hello-world",                                 
+```
+
+We can use `podman inspect` on *local* images
+```
+[root@rhcsa-node-1 ~]# podman inspect feb5d9fea6a5 # image ID
+[                                                                                  
+     {                                                                             
+          "Id": "feb5d9fea6a5e9606aa995e879d862b825965ba48de054caab5ef356dc6b3412",
+```
+
+# 3. Performing container management using commands such as podman and skopeo
+
+## tagging containers
+we can use the `podman tag` to add an additional name to a locally-stored image
+```
+[root@rhcsa-node-1 ~]# podman tag feb5d9fea6a5 hello-world:latest              
+[root@rhcsa-node-1 ~]# podman image list                                       
+REPOSITORY                     TAG         IMAGE ID      CREATED        SIZE   
+docker.io/library/hello-world  latest      feb5d9fea6a5  17 months ago  19.9 kB
+localhost/hello-world          latest      feb5d9fea6a5  17 months ago  19.9 kB # our new tagged local image
+```
+
+# 4. Build a container from a ContainerFile
+
+
