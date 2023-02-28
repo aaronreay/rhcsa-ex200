@@ -92,4 +92,35 @@ a01b9b29ee22  docker.io/library/caddy:latest  caddy run --confi...  3 minutes ag
 ```
 
 # 6. Run a service inside a container
+## running commands inside a remote container
+we can actually spin up a remote container, run commands, and then delete after exit
+```
+[root@rhcsa-node-1 ~]# podman run --rm docker.io/library/caddy:latest ls
+```
+## runnings commands on a local container
+```
+[root@rhcsa-node-1 ~]# podman run -it --rm docker.io/library/caddy:latest /bin/sh
+/srv #                                                                           
+```
+Above we can see we've spawned a shell on the local container
 
+## run a container with additional arguments
+```
+[root@rhcsa-node-1 ~]# podman run -d --rm --ip=10.88.0.20 caddy:latest                                                              
+040c7c96d3b296a18ad03108938d5b0dc4a584cf85bd47645383af9253ec4ed7                                                                    
+[root@rhcsa-node-1 ~]# podman container ls                                                    
+CONTAINER ID  IMAGE                           COMMAND               CREATED         STATUS             PORTS       NAMES
+a01b9b29ee22  docker.io/library/caddy:latest  caddy run --confi...  25 minutes ago  Up 22 minutes ago              amazing_matsumoto
+040c7c96d3b2  docker.io/library/caddy:latest  caddy run --confi...  14 seconds ago  Up 14 seconds ago              mystifying_swartz
+
+[root@rhcsa-node-1 ~]# podman container inspect 040c7c96d3b2 | grep -i 10.88.0.20
+               "IPAddress": "10.88.0.20",
+                         "IPAddress": "10.88.0.20",
+                    "--ip=10.88.0.20",
+```
+
+## executing commands on a container
+```
+[root@rhcsa-node-1 ~]# podman exec -it 040c7c96d3b2 ls
+[root@rhcsa-node-1 ~]#                                
+```
