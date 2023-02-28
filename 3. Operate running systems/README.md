@@ -109,8 +109,20 @@ F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 4 S     0    1544     911  0  80   0 -  6562 -      ttyS0    00:00:00 bash
 0 R     0    1698    1544  0  80   0 - 11377 -      ttyS0    00:00:00 ps  
 ```
-To change the value of a process, we can run `nice -n 10 top`. This will set the nice level of top to 10
+To set the priority of a process, we can run `nice -n 10 top`. This will set the nice level of top to 10
 
 We can view this in the top output
 
 ![nice](nice.png)
+
+to increase the priority of a process, the syntax is as follows:
+
+`nice -n <nice_value> command`
+
+The higher the value, the lower the priority. So `-` is good, `+` is bad (in a sense)
+
+We also have the `renice` command. This allows us to change the process of an existing process
+
+`renice -n <nice_value> -p/--pid <process_id` - change priority of existing process
+`renice -n <nice_value> -g <group_id> - change priority of all processes of a specific group
+`renice -n <nice_value> -u <name>|<id> - change priority of all programs of a specific user
