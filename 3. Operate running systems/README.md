@@ -98,3 +98,18 @@ bash
 * `-o` - set schedule to `SCHED_OTHER`
 * -`r` - set schedule to `SCHED_RR`
 
+if we want to see the max value range for each option, we can use `chrt --max`
+
+We have another utility, `nice/renice` - this allows us to change the levels of `SCHED_OTHER`
+
+Let's have a look at the following
+```
+[root@rhcsa-node-1 ~]# ps -l                                              
+F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD 
+4 S     0    1544     911  0  80   0 -  6562 -      ttyS0    00:00:00 bash
+0 R     0    1698    1544  0  80   0 - 11377 -      ttyS0    00:00:00 ps  
+```
+To change the value of a process, we can run `nice -n 10 top`. This will set the nice level of top to 10
+
+We can view this in the top output
+![nice](nice.png)
