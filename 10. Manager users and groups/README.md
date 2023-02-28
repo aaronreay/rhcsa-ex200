@@ -68,4 +68,14 @@ To override users supplementary group
 usermod -G wheel user1 # overwrite existing
 usermod -aG wheel user1 # append to existing
 ```
+
+# 4. Configure superuser access
+If we want to disable root access, we can comment `/bin/bash` to `/sbin/nologin` in `/etc/passwd`
+
+To grant superuser access to a user, we can use the wheel group
 ```
+[root@rhcsa-node-1 ~]# usermod -aG wheel user1              
+[root@rhcsa-node-1 ~]# id user1                             
+uid=1001(user1) gid=1001(user1) groups=1001(user1),10(wheel)
+```
+We can also look in `/etc/sudoers` or run `visudo` to see what other other `sudoers` group exist
