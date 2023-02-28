@@ -38,7 +38,7 @@ lrwxrwxrwx. 1 root root 13 Sep 27 08:35 /usr/lib/systemd/system/runlevel6.target
 ```
 
 # 3. Interrupt the boot process in order to gain access to a system
-This is * *_VERY IMPORTANT_** for the exam. If we cannot do this, we cannot proceed with the exam
+This is __VERY IMPORTANT__ for the exam. If we cannot do this, we cannot proceed with the exam
 
 We will need to boot up our linux node, and at the `GRUB` prompt, hit `e` to interrupt the process
 
