@@ -315,4 +315,40 @@ allow this access for now by executing:
 ```
 Here we can see it shows us that we are failing due to trying to bind on port `1234`. We get a couple of options to fix this, but what do they do?
 
-
+`ausearch` is a way to parse audit daemon logs. We can use this with the `-c 'httpd'` flag in order to search for any event with this name
+```
+[root@rhcsa-node-1 ~]# ausearch -c 'httpd'
+type=PROCTITLE msg=audit(1677599954.859:217): proctitle=2F7573722F7362696E2F6874747064002D44464F524547524F554E44
+type=SYSCALL msg=audit(1677599954.859:217): arch=c000003e syscall=49 success=no exit=-13 a0=3 a1=563f199878c0 a2=10 a3=7fffc751fc0c items=0 ppid=1 pid=3209 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="httpd" exe="/usr/sbin/httpd" subj=system_u:system_r:httpd_t:s0 key=(null)type=AVC msg=audit(1677599954.859:217): avc:  denied  { name_bind } for  pid=3209 comm="httpd" src=1234 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:monopd_port_t:s0 tclass=tcp_socket permissive=0
+```
+With `ausearch`, we can pipe the output to `audit2allow`, which will create us a custom module
+```
+[root@rhcsa-node-1 ~]# ausearch -c 'httpd' --raw | audit2allow -M my-httpd 
+******************** IMPORTANT ***********************                     
+To make this policy package active, execute:                               
+                                                                           
+semodule -i my-httpd.pp                                                    
+```
+Here we can see that if we run `semodule -i my-httpd.pp`, we can enable this policy
+```
+[root@rhcsa-node-1 ~]# semodule -i my-httpd.pp
+[root@rhcsa-node-1 ~]# systemctl restart httpd                                              
+[root@rhcsa-node-1 ~]# systemctl status httpd                                               
+● httpd.service - The Apache HTTP Server                                                    
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+   Active: active (running) since Tue 2023-02-28 16:16:15 GMT; 3s ago                       
+```
+We can also have a look at the contents of what this module actually does - `my-httpd.pe`
+```
+module my-httpd 1.0;                             
+                                                 
+require {                                        
+        type httpd_t;                            
+        type monopd_port_t;                      
+        class tcp_socket name_bind;              
+}                                                
+                                                 
+#============= httpd_t ==============            
+allow httpd_t monopd_port_t:tcp_socket name_bind;
+```
+To remove this custom module, we can run `semodule -r my-httpd`
