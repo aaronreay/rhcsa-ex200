@@ -93,6 +93,8 @@ pool1       /dev/vdb2          5.00 GiB   Data
 Pool Name   Name   Used      Created             Device                   UUID                                
 pool1       fs1    546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1   c7eee815-f1bb-4f08-ab72-d3ac160b3058
 [root@rhcsa-node-1 mnt]# stratis filesystem snapshot pool1 fs1 snapshot1
+
+mount /dev/stratis/pool1/fs1 /dir1
 ```
 
 ## persistent stratis filesystem mounting
