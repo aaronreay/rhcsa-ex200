@@ -174,3 +174,42 @@ However, `journald` does not provide persistent storage by default, unlike `rsys
 
 # 8. Preserve system journals
 Before we persist journals, we will need to create a directory for which these will be stored
+```
+mkdir /var/log/journal
+
+# Then we need to set journald to persist logging
+# in /etc/journald.conf, set Storage from `auto` to `persistent`
+reboot
+
+# upon logging back on, we should see data in the /var/log/journal directory
+[root@rhcsa-node-1 ~]# ls -l /var/log/journal/                                     
+total 0                                                                            
+drwxr-sr-x+ 2 root systemd-journal 53 Mar  1 17:46 c2687f51f97242b4ad7ee0bfbe57b450
+```
+
+# 9. Start, top and check status of network services
+* `systemctl start sshd.service` - start the `ssh` daemon
+* `systemctl status sshd.service` - check the status of the `ssh` daemon
+
+If a serivce is `masked`, it will redirect to `/dev/null`. To `unmask` a server, we can run the following:
+* `systemctl umask sshd.service`
+
+If we want to permanently disable a service, simply `mask` the service
+* `systemctl mask sshd.service`
+
+* `systemctl enable sshd.service --now` - this will both enable and start the service on one line
+* `systemctl is-enabled sshd.service` - check if the daemon is enabled
+
+# 10. Securely transfer files between files
+## scp
+* `scp file1 reaya:rhcsa-node-2:/tmp/` - will copy `file` to `rhcsa-node-2`, as `reaya` user, and store in the `/tmp` directory
+
+by default, `scp` uses `port 22`; but what if we want to use another?
+* `scp -P 2525 file` reaya@rhcsa-node-2:/tmp` - the `-P` flag allows us to change the port
+
+we can also send a file using `ssh keys`
+* `scp -i ~/.ssh/id_rsa file1 reaya@rhcsa-node-2:/tmp` - this will use ssh keys, assuming the receiving host has a copy of the `.pub` key
+
+## sftp
+`sftp` is an interactive secure transfer tool
+
