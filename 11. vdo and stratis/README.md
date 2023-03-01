@@ -62,4 +62,9 @@ Keep in mind that `VDO volumes` are thin provisioned, so we can only see the log
 
 # 2. Managing layered storage with stratis
 
+`stratis` is a `service` that manages pools of physical storage devices and transparently creates and managed volumes for the newly created file systems
+
+Stratis managed file systems are formatted uxing `XFS`
+
+![stratis](strais.png}
 
