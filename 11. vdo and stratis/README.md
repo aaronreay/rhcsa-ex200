@@ -68,3 +68,29 @@ Stratis managed file systems are formatted uxing `XFS`
 
 ![stratis](stratis.png)
 
+To get started, we will need to install the following - `dnf install -y stratisd stratis-cli`
+
+## creating a stratis pool
+```
+[root@rhcsa-node-1 mnt]# stratis pool create pool1 /dev/vdb1                                
+[root@rhcsa-node-1 mnt]# stratis pool list                                                  
+Name                  Total Physical   Properties                                   UUID    
+pool1   5 GiB / 37.63 MiB / 4.96 GiB      ~Ca,~Cr   5df91199-5636-4ada-8866-bd301c02814e    
+[root@rhcsa-node-1 mnt]# stratis pool add-data pool1 /dev/vdb2                              
+[root@rhcsa-node-1 mnt]# stratis pool list                                                  
+Name                      Total Physical   Properties                                   UUID
+pool1   10.00 GiB / 41.63 MiB / 9.96 GiB      ~Ca,~Cr   5df91199-5636-4ada-8866-bd301c02814e
+[root@rhcsa-node-1 mnt]# stratis blockdev list                                              
+Pool Name   Device Node   Physical Size   Tier                                              
+pool1       /dev/vdb1             5 GiB   Data                                              
+pool1       /dev/vdb2          5.00 GiB   Data                                              
+```
+
+## stratis filesystems
+```
+[root@rhcsa-node-1 mnt]# stratis filesystem create pool1 fs1
+[root@rhcsa-node-1 mnt]# stratis filesystem list
+Pool Name   Name   Used      Created             Device                   UUID                                
+pool1       fs1    546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1   c7eee815-f1bb-4f08-ab72-d3ac160b3058
+[root@rhcsa-node-1 mnt]# stratis filesystem snapshot pool1 fs1 snapshot1
+```
