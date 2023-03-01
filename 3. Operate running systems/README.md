@@ -131,3 +131,30 @@ We also have the `renice` command. This allows us to change the process of an ex
 
 # 6. Manage tuning profiles
 `tuned` is the package responsible for tuning profiles. It is managed with `tuned-adm`. We can also get additional profiles with `dnf search tuned-profiles`
+```
+[root@rhcsa-node-1 ~]# tuned-adm recommend
+virtual-guest
+[root@rhcsa-node-1 ~]# tuned-adm active
+Current active profile: virtual-guest
+[root@rhcsa-node-1 ~]# tuned-adm list
+Available profiles:
+- accelerator-performance     - Throughput performance based tuning with disabled higher latency STOP states
+- balanced                    - General non-specialized tuned profile
+- desktop                     - Optimize for the desktop use-case
+- hpc-compute                 - Optimize for HPC compute workloads
+- intel-sst                   - Configure for Intel Speed Select Base Frequency
+- latency-performance         - Optimize for deterministic performance at the cost of increased power consumption
+- network-latency             - Optimize for deterministic performance at the cost of increased power consumption, focused on low latency network performance
+- network-throughput          - Optimize for streaming network throughput, generally only necessary on older CPUs or 40G+ networks
+- optimize-serial-console     - Optimize for serial console use.
+- powersave                   - Optimize for low power consumption
+- throughput-performance      - Broadly applicable tuning that provides excellent performance across a variety of common server workloads
+- virtual-guest               - Optimize for running inside a virtual guest
+- virtual-host                - Optimize for running KVM guests
+Current active profile: virtual-guest
+```
+* to change our current profile we can run - `tuned-adm profile <profile_name>`
+* to verify everything is working correctly - `tuned-adm verify` 
+
+# 7. Locate and interpret system log files and journals
+
