@@ -212,4 +212,18 @@ we can also send a file using `ssh keys`
 
 ## sftp
 `sftp` is an interactive secure transfer tool
+```
+touch ajr
+sftp reaya@rhcsa-node-2
+cd /tmp
+put ajr
+```
+With the code above, we create a simple file, then create a interactive session on rhcsa-node-2 with sftp. We change into the `/tmp` directory, and use
+the `put` command to `upload` our file onto this node. sftp works from the current directory it was spawned from, hence it could see the file
 
+As with `scp`, we can also change the port and use an ssh key:
+* `sftp -o Port=2525 -o IdentitiyFile=~/.ssh/id_rsa reaya@rhcsa-node-2:/tmp`
+
+We can also upload and download directories:
+* `put -r directory`
+* `get -r direct_from_remote`
