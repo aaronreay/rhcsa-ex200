@@ -97,6 +97,20 @@ pool1       fs1    546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1   c7eee8
 mount /dev/stratis/pool1/fs1 /dir1
 ```
 
+## stratis snapshots
+```
+[root@rhcsa-node-1 ~]# stratis filesystem snapshot pool1 fs1 snapshot1
+[root@rhcsa-node-1 ~]# stratis filesystem list
+Pool Name   Name        Used      Created             Device                         UUID                                
+pool1       fs1         546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1         c7eee815-f1bb-4f08-ab72-d3ac160b3058
+pool1       snapshot1   546 MiB   Mar 01 2023 21:34   /dev/stratis/pool1/snapshot1   5decbc9f-c6dc-4db5-96b2-940fa4173783
+[root@rhcsa-node-1 ~]# mkdir /dir2
+[root@rhcsa-node-1 ~]# mount /dev/stratis/pool1/snapshot1 /dir2
+[root@rhcsa-node-1 ~]# cd /dir2
+[root@rhcsa-node-1 dir2]# ls -ltr
+total 0
+```
+
 ## persistent stratis filesystem mounting
 It is easiest to mount a `stratis` filesystem by obtaining the `UUID` of the block device
 ```
