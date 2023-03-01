@@ -66,5 +66,5 @@ Keep in mind that `VDO volumes` are thin provisioned, so we can only see the log
 
 Stratis managed file systems are formatted uxing `XFS`
 
-![stratis](stratis.png}
+![stratis](stratis.png)
 
