@@ -94,3 +94,20 @@ Pool Name   Name   Used      Created             Device                   UUID
 pool1       fs1    546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1   c7eee815-f1bb-4f08-ab72-d3ac160b3058
 [root@rhcsa-node-1 mnt]# stratis filesystem snapshot pool1 fs1 snapshot1
 ```
+
+## persistent stratis filesystem mounting
+It is easiest to mount a `stratis` filesystem by obtaining the `UUID` of the block device
+```
+[root@rhcsa-node-1 ~]# stratis filesystem list
+Pool Name   Name        Used      Created             Device                         UUID                                
+pool1       snapshot1   546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/snapshot1   76912f81-dae7-497d-abbc-22ce73b3d68c
+pool1       fs1         546 MiB   Mar 01 2023 19:26   /dev/stratis/pool1/fs1         c7eee815-f1bb-4f08-ab72-d3ac160b3058
+[root@rhcsa-node-1 ~]# lsblk -o +UUID /dev/stratis/pool1/fs1
+NAME                  MAJ:MIN RM SIZE RO TYPE    MOUNTPOINT UUID
+stratis-1-5df9119956364ada8866bd301c02814e-thin-fs-c7eee815f1bb4f08ab72d3ac160b3058
+                      253:7    0   1T  0 stratis /dir1      c7eee815-f1bb-4f08-ab72-d3ac160b3058
+
+[root@rhcsa-node-1 ~]# echo -e 'UUID=c7eee815-f1bb-4f08-ab72-d3ac160b3058 /dir1 xfs defaults,x-systemd.requires=stratisd.service 0 0' >> /etc/fstab
+[root@rhcsa-node-1 ~]# mount -a
+```
+Without setting `x-systemd.requires=stratisd.service` option, the volume may fail to mount, causing linux to go into `recovery` mode
