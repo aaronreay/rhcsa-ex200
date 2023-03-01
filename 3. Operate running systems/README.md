@@ -157,4 +157,20 @@ Current active profile: virtual-guest
 * to verify everything is working correctly - `tuned-adm verify` 
 
 # 7. Locate and interpret system log files and journals
+`rsyslog` is our `syslog daemon` of choice, for persistent storage
+It will store all logs in directories under `/var/log/*`
+* `/var/log/messages` - contents of boot and kernel messages
+* `/var/log/secure` - contents of users and their activities
 
+with `RHEL 7+` we also have a new utility, `journald/journalctl`
+* `journalctl` - show all event messages, similar to `/var/log/messages`
+* `journalctl -k` - show all kernel messages, similar to `dmesg`
+* `journalctl -p crit` - show all journal entires based on critical priority
+* `journalctl _UID=`user_uid` - display logs from a certain user/uid
+* `journalctl --since today` - display all logs from today
+* `journalctl -u sshd` - display all logs from a particular servce, in this case, `sshd`
+
+However, `journald` does not provide persistent storage by default, unlike `rsyslog`. We will discuss this more in depth below
+
+# 8. Preserve system journals
+Before we persist journals, we will need to create a directory for which these will be stored
